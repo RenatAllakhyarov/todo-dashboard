@@ -11,7 +11,7 @@ if (!rootElement) {
 const reactRoot: Root = createRoot(rootElement);
 
 reactRoot.render(
-    <StrictMode>
+    // <StrictMode>
         <App />
-    </StrictMode>
+    // </StrictMode>
 );

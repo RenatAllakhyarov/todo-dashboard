@@ -1,0 +1,48 @@
+.todo-item-constructor {
+    display: grid;
+    gap: 10px;
+}
+
+.constructor-card-name,
+.constructor-card-description {
+    display: grid;
+    gap: 8px;
+}
+
+.constructor-card-name label,
+.constructor-card-description label {
+    font-size: 12px;
+    text-transform: uppercase;
+    padding-top: 10px;
+    color: #1D3F36;
+}
+
+.constructor-card-name input,
+.constructor-card-description input {
+    width: 80%;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(42, 42, 42, 0.55);
+    background-color: #F6EBDD;
+    color: #1b1a17;
+}
+
+.constructor-card-name input:hover,
+.constructor-card-description input:hover {
+    background-color: #F3E6D6;
+    border-color: rgba(29, 63, 54, 0.65);
+}   
+
+.constructor-submit-button button {
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #1D3F36;
+    background-color: #1D3F36;
+    color: #FAF2E7;
+    text-transform: uppercase;
+}
+
+.constructor-submit-button button:hover {
+    background-color: #17322b;
+    border-color: #17322b;
+}
