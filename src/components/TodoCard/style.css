@@ -36,3 +36,18 @@
     background-color: #F3E6D6;
     border-color: rgba(29, 63, 54, 0.65);
 }
+
+.todo-card-remove-button button {
+      margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid #1D3F36;
+    background-color: #1D3F36;
+    color: #FAF2E7;
+    text-transform: uppercase;
+}
+
+.todo-card-remove-button button:hover {
+    background-color: #17322b;
+    border-color: #17322b;
+}

@@ -1,4 +1,5 @@
-import TodoItem, {  type TodoStatus } from "@domains/TodoItem";
+import useTodoItems from "@hooks/useTodoItem";
+import TodoItem, { type TodoStatus } from "@domains/TodoItem";
 import type { ChangeEvent, ReactElement } from "react";
 import "./style.css";
 
@@ -8,9 +9,15 @@ interface ITodoCardProps {
 }
 
 const TodoCard = ({ item, onStatusChange }: ITodoCardProps): ReactElement => {
+    const {removeCard} = useTodoItems();
+
     const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
         onStatusChange(item.getId(), event.target.value as TodoStatus);
     };
+
+    const handleRemoveCard = () => {
+        removeCard(item.getId());
+    }
 
     return (
         <div className="todo-item">
@@ -27,6 +34,9 @@ const TodoCard = ({ item, onStatusChange }: ITodoCardProps): ReactElement => {
                 <option value={"IN_PROGRESS"}>IN_PROGRESS</option>
                 <option value={"DONE"}>DONE</option>
             </select>
+            <div className="todo-card-remove-button">
+                <button onClick={handleRemoveCard}>Remove</button>
+            </div>
         </div>
     );
 };

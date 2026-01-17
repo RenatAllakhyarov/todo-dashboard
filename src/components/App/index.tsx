@@ -1,8 +1,9 @@
+import useTodoItems from "@hooks/useTodoItem";
 import TodoColumn from "@components/TodoColumn";
 import TodoItem, { TodoStatus } from "@domains/TodoItem";
 import TodoItemConstructor from "@components/TodoItemConstructor";
-import { ItemStatus, localStorageKey } from "@utils/constants";
-import { useEffect, useMemo, useState, type ReactElement } from "react";
+import { useMemo, type ReactElement } from "react";
+import { ItemStatus } from "@utils/constants";
 import "./style.css";
 
 interface IToDoColumns {
@@ -12,41 +13,37 @@ interface IToDoColumns {
 }
 
 const App = (): ReactElement => {
-    const [cards, setCards] = useState<TodoItem[]>([]);
-
-    const addCard = (card: TodoItem) => {
-        setCards([...cards, card]);
-    };
+    const { cards, setCards, addCard, toDoItems, inProgressItems, doneItems } =
+        useTodoItems();
 
     const handleCardStatusChange = (cardId: string, newStatus: TodoStatus) => {
-        const cardWithCurrentId = cards.find((card:TodoItem) => card.getId() === cardId);
+        const cardWithCurrentId = cards.find(
+            (card: TodoItem) => card.getId() === cardId,
+        );
 
         if (!cardWithCurrentId) {
             return;
         }
-        
-        console.log("Selected Card with old status: ", cardWithCurrentId.getStatus());
-        
+
+        console.log(
+            "Selected Card with old status: ",
+            cardWithCurrentId.getStatus(),
+        );
+
         cardWithCurrentId.setStatus(newStatus);
 
-        console.log("Selected Card with old status: ", cardWithCurrentId.getStatus());
+        console.log(
+            "Selected Card with old status: ",
+            cardWithCurrentId.getStatus(),
+        );
 
         setCards([...cards]);
     };
 
-    const saveToLocalStorage = (cards: TodoItem[]) => {
-        const cardsToString = cards.map((card) => card.toString());
 
-        console.log("CARDS FOR LS: ", cardsToString);
-
-        localStorage.setItem(localStorageKey, JSON.stringify(cardsToString));
-    };
+    // -----------------------------------------
 
     const taskFilterToColumns: IToDoColumns = useMemo(() => {
-        const toDoItems: TodoItem[] = [];
-        const inProgressItems: TodoItem[] = [];
-        const doneItems: TodoItem[] = [];
-
         cards.forEach((item: TodoItem) => {
             const itemStatus: string = item.getStatus();
 
@@ -74,32 +71,6 @@ const App = (): ReactElement => {
             inProgressItems,
             doneItems,
         };
-    }, [cards]);
-
-    useEffect(() => {
-        const storageItems: string | null = localStorage.getItem(localStorageKey);
-
-        console.log("ITEMS FROM STORAGE:", storageItems);
-
-        if (!storageItems) {
-            return;
-        }
-
-        const stringStorageItems: string[] = JSON.parse(storageItems);
-
-        console.log("PARSED ITEMS:", stringStorageItems);
-
-        const parsedItems = stringStorageItems.map((item) =>
-            TodoItem.fromRaw(item)
-        );
-
-        console.log(parsedItems);
-
-        setCards(parsedItems);
-    }, []);
-
-    useEffect(() => {
-        saveToLocalStorage(cards);
     }, [cards]);
 
     return (
