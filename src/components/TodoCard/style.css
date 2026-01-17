@@ -1,5 +1,6 @@
 .todo-item {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     padding: 10px;
     gap: 20px;
     border: 1px solid rgba(29, 63, 54, 0.35);
@@ -13,10 +14,13 @@
 }
 
 .todo-item-name {
+    word-break: break-all;
+    width: 100%;
     color: #1D3F36;
 }
 
 .todo-item-description {
+    word-break: break-all;
     color: #2d2b26;
 }
 
