@@ -19,7 +19,6 @@
 
 .constructor-card-name input,
 .constructor-card-description input {
-    /* width: 80%; */
     padding: 12px;
     border-radius: 14px;
     border: 1px solid rgba(42, 42, 42, 0.55);
