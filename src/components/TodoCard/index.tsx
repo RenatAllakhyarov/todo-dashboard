@@ -1,23 +1,33 @@
-import useTodoItems from "@hooks/useTodoItem";
 import TodoItem, { type TodoStatus } from "@domains/TodoItem";
 import type { ChangeEvent, ReactElement } from "react";
 import "./style.css";
 
 interface ITodoCardProps {
     item: TodoItem;
-    onStatusChange: (id: string, status: TodoStatus) => void;
+    onEditStart: (id: string) => void;
+    onRemove: (id: string) => void;
+    onStatusChange: (id: string, newStatus: TodoStatus) => void;
 }
 
-const TodoCard = ({ item, onStatusChange }: ITodoCardProps): ReactElement => {
-    const {removeCard} = useTodoItems();
+const TodoCard = ({
+    item,
+    onRemove,
+    onEditStart,
+    onStatusChange,
+}: ITodoCardProps): ReactElement => {
+    const itemId: string = item.getId();
 
     const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        onStatusChange(item.getId(), event.target.value as TodoStatus);
+        onStatusChange(itemId, event.target.value as TodoStatus);
     };
 
     const handleRemoveCard = () => {
-        removeCard(item.getId());
-    }
+        onRemove(itemId);
+    };
+
+    const showEditForm = () => {
+        onEditStart(itemId);
+    };
 
     return (
         <div className="todo-item">
@@ -27,15 +37,16 @@ const TodoCard = ({ item, onStatusChange }: ITodoCardProps): ReactElement => {
             </div>
             <select
                 className="todo-item-status"
-                value={item.getStatus()}
                 onChange={handleStatusChange}
+                value={item.getStatus()}
             >
                 <option value={"TODO"}>TODO</option>
                 <option value={"IN_PROGRESS"}>IN_PROGRESS</option>
                 <option value={"DONE"}>DONE</option>
             </select>
-            <div className="todo-card-remove-button">
+            <div className="todo-card-buttons">
                 <button onClick={handleRemoveCard}>Remove</button>
+                <button onClick={showEditForm}>Edit</button>
             </div>
         </div>
     );

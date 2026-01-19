@@ -1,8 +1,14 @@
 import TodoItem from "@domains/TodoItem";
-import { localStorageKey } from "@utils/constants";
-import { useEffect, useState } from "react";
+import { ItemStatus, localStorageKey } from "@utils/constants";
+import { useEffect, useMemo, useState } from "react";
 
-const useTodoItems = () => {
+interface IToDoColumns {
+    toDoItems: TodoItem[];
+    inProgressItems: TodoItem[];
+    doneItems: TodoItem[];
+}
+
+const useTodoItems = (isCashEnabled: boolean = true) => {
     const [cards, setCards] = useState<TodoItem[]>([]);
 
     const toDoItems: TodoItem[] = [];
@@ -14,46 +20,83 @@ const useTodoItems = () => {
     };
 
     const removeCard = (cardId: string) => {
-        console.log(cardId);
         const cardWithCurrentId = cards.find(
             (card: TodoItem) => card.getId() === cardId,
         );
 
-        console.log("cardWithCurrentId", cardWithCurrentId);    
-
-        const idArray = cards.map((card:TodoItem) => console.log(card.getId()));
-
-        console.log(idArray);
-
         if (!cardWithCurrentId) {
-            console.log("NOTHING:", cardWithCurrentId  )
             return;
         }
 
-        const newCardsList = cards.filter( card => card.getId() !== cardId);
-
-        console.log("NEW LIST: ", newCardsList);
+        const newCardsList = cards.filter((card) => card.getId() !== cardId);
 
         setCards(newCardsList);
+    };
+
+    const getCardById = (cardId: string) => {
+        return cards.find((card: TodoItem) => card.getId() === cardId);
+    }
+
+    const findCard = (
+        cardName?: string,
+        cardDescription?: string,
+    ): TodoItem => {
+        const foundedCard = cards.find(
+            (item: TodoItem) =>
+                cardName?.toLowerCase().includes(item.getName().toLowerCase()) ||
+                cardDescription?.toLowerCase().includes(item.getDescription().toLowerCase())
+        );
+
+        if (!foundedCard) {
+            throw new Error("Don't have card with this params");
+        }
+
+        return foundedCard;
     };
 
     const saveToLocalStorage = (cards: TodoItem[]) => {
         const cardsToString = cards.map((card) => card.toString());
 
-        console.log("CARDS FOR LS: ", cardsToString);
-
         localStorage.setItem(localStorageKey, JSON.stringify(cardsToString));
     };
 
-    useEffect(() => {
-        saveToLocalStorage(cards);
+    const taskFilterToColumns: IToDoColumns = useMemo(() => {
+        cards.forEach((item: TodoItem) => {
+            const itemStatus: string = item.getStatus();
+
+            if (itemStatus === ItemStatus.TODO) {
+                toDoItems.push(item);
+
+                return;
+            }
+
+            if (itemStatus === ItemStatus.IN_PROGRESS) {
+                inProgressItems.push(item);
+
+                return;
+            }
+
+            if (itemStatus === ItemStatus.DONE) {
+                doneItems.push(item);
+
+                return;
+            }
+        });
+
+        return {
+            toDoItems,
+            inProgressItems,
+            doneItems,
+        };
     }, [cards]);
 
-    useEffect(() => {
+    const getItemsFromLocalStorage = (isCashEnabled: boolean) => {
+        if (!isCashEnabled) {
+            return;
+        }
+
         const storageItems: string | null =
             localStorage.getItem(localStorageKey);
-
-        console.log("ITEMS FROM STORAGE:", storageItems);
 
         if (!storageItems) {
             return;
@@ -61,25 +104,37 @@ const useTodoItems = () => {
 
         const stringStorageItems: string[] = JSON.parse(storageItems);
 
-        console.log("PARSED ITEMS:", stringStorageItems);
-
         const parsedItems = stringStorageItems.map((item) =>
             TodoItem.fromRaw(item),
         );
 
-        console.log(parsedItems);
-
         setCards(parsedItems);
+    };
+
+    useEffect(() => {
+        if (!cards.length) {
+            return;
+        }
+
+        if (!isCashEnabled) {
+            return;
+        }
+
+        saveToLocalStorage(cards);
+    }, [cards]);
+
+    useEffect(() => {
+        getItemsFromLocalStorage(isCashEnabled);
     }, []);
 
     return {
         cards,
-        setCards,
         addCard,
-        toDoItems,
-        inProgressItems,
-        doneItems,
+        setCards,
+        findCard,
         removeCard,
+        getCardById,
+        taskFilterToColumns,
     };
 };
 

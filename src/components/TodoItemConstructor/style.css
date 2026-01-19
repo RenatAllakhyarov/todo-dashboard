@@ -3,6 +3,10 @@
     gap: 10px;
 }
 
+.todo-item-constructor h2 {
+    margin: 0;
+}
+
 .constructor-card-name,
 .constructor-card-description {
     display: grid;

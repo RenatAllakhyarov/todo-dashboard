@@ -1,16 +1,24 @@
 import TodoCard from "@components/TodoCard";
-import TodoItem, { type TodoStatus } from "@domains/TodoItem";
+import TodoItem, { TodoStatus } from "@domains/TodoItem";
 import { memo, type ReactElement } from "react";
 import "./style.css";
 
 interface ITodoColumProps {
     items: TodoItem[];
     title: string;
-    onCardStatusChange: (id: string, status: TodoStatus) => void;
+    removeCard: (id: string) => void;
+    showEditForm: (formForCardId: string) => void;
+    onCardStatusChange: (id: string, newStatus: TodoStatus) => void;
 }
 
 const TodoColumn = memo(
-    ({ items, onCardStatusChange, title }: ITodoColumProps): ReactElement => (
+    ({
+        items,
+        title,
+        onCardStatusChange,
+        showEditForm,
+        removeCard,
+    }: ITodoColumProps): ReactElement => (
         <div key="todo-column" className="todo-column">
             <div className="todo-column-title">
                 <h2>{title}</h2>
@@ -18,8 +26,10 @@ const TodoColumn = memo(
             {items.map((item: TodoItem) => (
                 <TodoCard
                     item={item}
-                    onStatusChange={onCardStatusChange}
                     key={item.getId()}
+                    onRemove={removeCard}
+                    onEditStart={showEditForm}
+                    onStatusChange={onCardStatusChange}
                 />
             ))}
         </div>

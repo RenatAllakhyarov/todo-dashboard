@@ -4,11 +4,11 @@ import { genRandomHex } from "@utils/functions";
 import "./style.css";
 
 interface ITodoItemConstructorProps {
-    onCreate: (card: TodoItem) => void;
+    onSubmit: (card: TodoItem) => void;
 }
 
 const TodoItemConstructor = ({
-    onCreate,
+    onSubmit,
 }: ITodoItemConstructorProps): ReactElement => {
     const onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -24,7 +24,7 @@ const TodoItemConstructor = ({
             throw new Error("Insufficient data for card creation");
         }
 
-        onCreate(
+        onSubmit(
             TodoItem.fromData(
                 genRandomHex(),
                 cardName as string,

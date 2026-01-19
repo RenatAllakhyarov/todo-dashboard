@@ -37,8 +37,13 @@
     border-color: rgba(29, 63, 54, 0.65);
 }
 
-.todo-card-remove-button button {
-      margin-top: 10px;
+.todo-card-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.todo-card-buttons button {
     padding: 12px;
     border-radius: 14px;
     border: 1px solid #1D3F36;
@@ -47,7 +52,7 @@
     text-transform: uppercase;
 }
 
-.todo-card-remove-button button:hover {
+.todo-card-buttons button:hover {
     background-color: #17322b;
     border-color: #17322b;
 }

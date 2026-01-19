@@ -13,6 +13,14 @@ header {
     color: #1D3F36;
 }
 
+header h1 {
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-items: center;
+    align-items: center;
+}
+
 .task-constructor {
     padding: 30px;
     border-bottom: 20px solid #1D3F36;
