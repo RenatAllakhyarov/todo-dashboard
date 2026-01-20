@@ -38,6 +38,10 @@
 }
 
 .todo-card-buttons {
+    display: none;
+}
+
+.todo-item:hover .todo-card-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;

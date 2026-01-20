@@ -31,9 +31,11 @@ const TodoCard = ({
 
     return (
         <div className="todo-item">
-            <div className="todo-item-name">Name: {item.getName()}</div>
+            <div className="todo-item-name">
+                <strong>Name:</strong> {item.getName()}
+            </div>
             <div className="todo-item-description">
-                Description: {item.getDescription()}
+                <strong>Description:</strong> {item.getDescription()}
             </div>
             <select
                 className="todo-item-status"

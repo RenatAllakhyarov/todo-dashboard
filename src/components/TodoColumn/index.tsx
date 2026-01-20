@@ -23,6 +23,11 @@ const TodoColumn = memo(
             <div className="todo-column-title">
                 <h2>{title}</h2>
             </div>
+            {items.length === 0 && (
+                <div className="todo-column-empty">
+                    There is no tasks
+                </div>
+            )}
             {items.map((item: TodoItem) => (
                 <TodoCard
                     item={item}
