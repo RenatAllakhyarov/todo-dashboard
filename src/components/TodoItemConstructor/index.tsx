@@ -1,15 +1,12 @@
 import TodoItem from "@domains/TodoItem";
+import { useDashboardContext } from "@context/TodoDashboardContext";
 import type { FormEvent, ReactElement } from "react";
 import { genRandomHex } from "@utils/functions";
 import "./style.css";
 
-interface ITodoItemConstructorProps {
-    onSubmit: (card: TodoItem) => void;
-}
+const TodoItemConstructor = (): ReactElement => {
+    const { addCard } = useDashboardContext();
 
-const TodoItemConstructor = ({
-    onSubmit,
-}: ITodoItemConstructorProps): ReactElement => {
     const onFormSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -24,7 +21,7 @@ const TodoItemConstructor = ({
             throw new Error("Insufficient data for card creation");
         }
 
-        onSubmit(
+        addCard(
             TodoItem.fromData(
                 genRandomHex(),
                 cardName as string,

@@ -1,32 +1,27 @@
 import TodoItem, { type TodoStatus } from "@domains/TodoItem";
+import { useDashboardContext } from "@context/TodoDashboardContext";
 import type { ChangeEvent, ReactElement } from "react";
 import "./style.css";
 
 interface ITodoCardProps {
     item: TodoItem;
-    onEditStart: (id: string) => void;
-    onRemove: (id: string) => void;
-    onStatusChange: (id: string, newStatus: TodoStatus) => void;
 }
 
-const TodoCard = ({
-    item,
-    onRemove,
-    onEditStart,
-    onStatusChange,
-}: ITodoCardProps): ReactElement => {
+const TodoCard = ({ item }: ITodoCardProps): ReactElement => {
     const itemId: string = item.getId();
 
+    const { handleCardEdit, removeCard } = useDashboardContext();
+
     const handleStatusChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        onStatusChange(itemId, event.target.value as TodoStatus);
+        handleCardEdit(itemId, { status: event.target.value as TodoStatus });
     };
 
     const handleRemoveCard = () => {
-        onRemove(itemId);
+        removeCard(itemId);
     };
 
     const showEditForm = () => {
-        onEditStart(itemId);
+        handleCardEdit(itemId);
     };
 
     return (

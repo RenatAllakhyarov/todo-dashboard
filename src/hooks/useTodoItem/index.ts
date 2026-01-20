@@ -1,6 +1,6 @@
-import TodoItem from "@domains/TodoItem";
+import TodoItem, { TodoStatus } from "@domains/TodoItem";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { ItemStatus, localStorageKey } from "@utils/constants";
-import { useEffect, useMemo, useState } from "react";
 
 interface IToDoColumns {
     toDoItems: TodoItem[];
@@ -8,12 +8,22 @@ interface IToDoColumns {
     doneItems: TodoItem[];
 }
 
-const useTodoItems = (isCashEnabled: boolean = true) => {
-    const [cards, setCards] = useState<TodoItem[]>([]);
+export interface ITodoHookReturn {
+    cards: TodoItem[];
+    taskFilterToColumns: IToDoColumns;
+    addCard: (card: TodoItem) => void;
+    removeCard: (cardId: string) => void;
+    setCards: Dispatch<SetStateAction<TodoItem[]>>;
+    getCardById: (cardId: string) => TodoItem | undefined;
+    findCard: (cardName?: string, cardDescription?: string) => TodoItem;
+    handleCardEdit: (
+        cardId: string,
+        data?: { name?: string; description?: string; status?: TodoStatus },
+    ) => void;
+}
 
-    const toDoItems: TodoItem[] = [];
-    const inProgressItems: TodoItem[] = [];
-    const doneItems: TodoItem[] = [];
+const useTodoItems = (isCashEnabled: boolean = true): ITodoHookReturn => {
+    const [cards, setCards] = useState<TodoItem[]>([]);
 
     const addCard = (card: TodoItem) => {
         setCards([...cards, card]);
@@ -33,9 +43,9 @@ const useTodoItems = (isCashEnabled: boolean = true) => {
         setCards(newCardsList);
     };
 
-    const getCardById = (cardId: string) => {
+    const getCardById = (cardId: string): TodoItem | undefined => {
         return cards.find((card: TodoItem) => card.getId() === cardId);
-    }
+    };
 
     const findCard = (
         cardName?: string,
@@ -43,8 +53,12 @@ const useTodoItems = (isCashEnabled: boolean = true) => {
     ): TodoItem => {
         const foundedCard = cards.find(
             (item: TodoItem) =>
-                cardName?.toLowerCase().includes(item.getName().toLowerCase()) ||
-                cardDescription?.toLowerCase().includes(item.getDescription().toLowerCase())
+                cardName
+                    ?.toLowerCase()
+                    .includes(item.getName().toLowerCase()) ||
+                cardDescription
+                    ?.toLowerCase()
+                    .includes(item.getDescription().toLowerCase()),
         );
 
         if (!foundedCard) {
@@ -61,6 +75,10 @@ const useTodoItems = (isCashEnabled: boolean = true) => {
     };
 
     const taskFilterToColumns: IToDoColumns = useMemo(() => {
+        const toDoItems: TodoItem[] = [];
+        const inProgressItems: TodoItem[] = [];
+        const doneItems: TodoItem[] = [];
+
         cards.forEach((item: TodoItem) => {
             const itemStatus: string = item.getStatus();
 
@@ -89,6 +107,27 @@ const useTodoItems = (isCashEnabled: boolean = true) => {
             doneItems,
         };
     }, [cards]);
+
+    const handleCardEdit = (
+        cardId: string,
+        data?: { name?: string; description?: string; status?: TodoStatus },
+    ) => {
+        const cardWithCurrentId = cards.find(
+            (card: TodoItem) => card.getId() === cardId,
+        );
+
+        if (!cardWithCurrentId) {
+            return;
+        }
+
+        data?.name && cardWithCurrentId.setName(data.name);
+
+        data?.description && cardWithCurrentId.setDescription(data.description);
+
+        data?.status && cardWithCurrentId.setStatus(data.status);
+
+        setCards([...cards]);
+    };
 
     const getItemsFromLocalStorage = (isCashEnabled: boolean) => {
         if (!isCashEnabled) {
@@ -134,6 +173,7 @@ const useTodoItems = (isCashEnabled: boolean = true) => {
         findCard,
         removeCard,
         getCardById,
+        handleCardEdit,
         taskFilterToColumns,
     };
 };
