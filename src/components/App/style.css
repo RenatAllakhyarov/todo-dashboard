@@ -3,11 +3,6 @@ body {
     margin: 0;
 }
 
-.to-do {
-    display: flex;
-    flex-direction: column;
-}
-
 header {
     display: flex;
     justify-content: center;
@@ -23,7 +18,7 @@ header {
     border-bottom: 20px solid #1D3F36;
 }
 
-.todo-list {
+.dashboard {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -31,8 +26,9 @@ header {
 
 .items-column {
     padding: 10px;
-    padding-bottom: 20px;
+    margin-bottom: 20px;
     width: 33.3%;
+    box-sizing: border-box;
     border: 1px solid black;
     background-color: bisque;
 }

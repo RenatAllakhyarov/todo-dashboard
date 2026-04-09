@@ -1,4 +1,4 @@
-import TodoItem, {  type TodoStatus } from "@domains/TodoItemClass";
+import TodoItem, {  type TodoStatus } from "@domains/TodoItem";
 import type { ChangeEvent, ReactElement } from "react";
 import "./style.css";
 

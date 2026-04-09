@@ -1,4 +1,4 @@
-import TodoItem from "@domains/TodoItemClass";
+import TodoItem from "@domains/TodoItem";
 import type { FormEvent, ReactElement } from "react";
 import { genRandomHex } from "@utils/functions";
 import "./style.css";
@@ -29,13 +29,16 @@ const TodoItemConstructor = ({
                 genRandomHex(),
                 cardName as string,
                 cardDescription as string,
-                "TODO"
-            )
+                "TODO",
+            ),
         );
+
+        form.reset();
     };
 
     return (
         <div className="todo-item-constructor">
+            <h2>Task Constructor</h2>
             <form onSubmit={onFormSubmit}>
                 <div className="constructor-card-name">
                     <label htmlFor="card-name">Name</label>

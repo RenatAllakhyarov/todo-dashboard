@@ -1,6 +1,7 @@
 import TodoColumn from "@components/TodoColumn";
+import TodoItem, { TodoStatus } from "@domains/TodoItem";
 import TodoItemConstructor from "@components/TodoItemConstructor";
-import TodoItem, { TodoStatus } from "@domains/TodoItemClass";
+import { ItemStatus, localStorageKey } from "@utils/constants";
 import { useEffect, useMemo, useState, type ReactElement } from "react";
 import "./style.css";
 
@@ -17,30 +18,28 @@ const App = (): ReactElement => {
         setCards([...cards, card]);
     };
 
-    const onCardStatusChange = (cardId: string, newStatus: TodoStatus) => {
-        const newStatusCards = cards.map((card: TodoItem) => {
-            console.log("OLD STATUS", card);
+    const handleCardStatusChange = (cardId: string, newStatus: TodoStatus) => {
+        const cardWithCurrentId = cards.find((card:TodoItem) => card.getId() === cardId);
 
-            if (card.getId() === cardId) {
-                card.setStatus(newStatus);
-            }
+        if (!cardWithCurrentId) {
+            return;
+        }
+        
+        console.log("Selected Card with old status: ", cardWithCurrentId.getStatus());
+        
+        cardWithCurrentId.setStatus(newStatus);
 
-            return card;
+        console.log("Selected Card with old status: ", cardWithCurrentId.getStatus());
 
-        });
-
-        console.log("NEW STATUS: ", newStatusCards);
-
-        setCards(newStatusCards);
+        setCards([...cards]);
     };
 
-    const handleLocalStorageSaving = (cards: TodoItem[]) => {
+    const saveToLocalStorage = (cards: TodoItem[]) => {
         const cardsToString = cards.map((card) => card.toString());
 
         console.log("CARDS FOR LS: ", cardsToString);
 
-        localStorage.setItem("todo-card", JSON.stringify(cardsToString));
-
+        localStorage.setItem(localStorageKey, JSON.stringify(cardsToString));
     };
 
     const taskFilterToColumns: IToDoColumns = useMemo(() => {
@@ -49,16 +48,24 @@ const App = (): ReactElement => {
         const doneItems: TodoItem[] = [];
 
         cards.forEach((item: TodoItem) => {
-            if (item.getStatus() === "TODO") {
+            const itemStatus: string = item.getStatus();
+
+            if (itemStatus === ItemStatus.TODO) {
                 toDoItems.push(item);
+
+                return;
             }
 
-            if (item.getStatus() === "IN_PROGRESS") {
+            if (itemStatus === ItemStatus.IN_PROGRESS) {
                 inProgressItems.push(item);
+
+                return;
             }
 
-            if (item.getStatus() === "DONE") {
+            if (itemStatus === ItemStatus.DONE) {
                 doneItems.push(item);
+
+                return;
             }
         });
 
@@ -70,7 +77,7 @@ const App = (): ReactElement => {
     }, [cards]);
 
     useEffect(() => {
-        const storageItems: string | null = localStorage.getItem("todo-card");
+        const storageItems: string | null = localStorage.getItem(localStorageKey);
 
         console.log("ITEMS FROM STORAGE:", storageItems);
 
@@ -89,11 +96,10 @@ const App = (): ReactElement => {
         console.log(parsedItems);
 
         setCards(parsedItems);
-
     }, []);
 
     useEffect(() => {
-        handleLocalStorageSaving(cards);
+        saveToLocalStorage(cards);
     }, [cards]);
 
     return (
@@ -102,29 +108,28 @@ const App = (): ReactElement => {
                 <h1>TO-DO List</h1>
             </header>
             <div className="task-constructor">
-                <h2>Task Constructor</h2>
                 <TodoItemConstructor onCreate={addCard} />
             </div>
-            <div className="todo-list">
+            <div className="dashboard">
                 <div className="items-column">
-                    <h2>TO-DO Tasks</h2>
                     <TodoColumn
                         items={taskFilterToColumns.toDoItems}
-                        onCardStatusChange={onCardStatusChange}
+                        onCardStatusChange={handleCardStatusChange}
+                        title="TO-DO"
                     />
                 </div>
                 <div className="items-column">
-                    <h2>In progress Tasks</h2>
                     <TodoColumn
                         items={taskFilterToColumns.inProgressItems}
-                        onCardStatusChange={onCardStatusChange}
+                        onCardStatusChange={handleCardStatusChange}
+                        title="In progress"
                     />
                 </div>
                 <div className="items-column">
-                    <h2>Done Tasks</h2>
                     <TodoColumn
                         items={taskFilterToColumns.doneItems}
-                        onCardStatusChange={onCardStatusChange}
+                        onCardStatusChange={handleCardStatusChange}
+                        title="Done"
                     />
                 </div>
             </div>
